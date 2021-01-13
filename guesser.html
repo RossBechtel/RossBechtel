@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="style.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <title>Guess the Word</title>
+</head>
+<body>
+<header class=banner>
+    <a href="games.html">Back to games</a>
+    <strong>Guess the Word</strong>
+    <a href="index.html">Home</a>
+</header>
+<div class=gamecanvas>
+    <canvas id="gc" width="600" height="600"></canvas>
+</div>
+
+<script>
+
+    window.onload=function() {
+        canv=document.getElementById("gc");
+        ctx=canv.getContext("2d");
+        // Be able to accept inputs from keyboard
+        document.addEventListener("keydown", keyPush);
+        // Run game function every 1000/15 milliseconds (15 times every second)
+        setInterval(game,1000/15);
+
+      }
+
+    strikes = 0;
+    played = true;
+    stop = false;
+    won = false;
+    lost = false;
+    words = ["armada","beautiful","beckon","mountain","astonish","smarter","savant",
+    "keyboard","voting","ballot","together","camel","snowboard","college","football",
+    "basketball","alcohol","gamer","muscle","winner","loser","coding","project","website",
+    "notebook","laptop","nightly","rumors","painting","toilet","spouse","husband","padding",
+    "shark","cracked","thrown","raging","outstanding","baseball", "market","stocks","invest"];
+    random = Math.floor(Math.random() * words.length);
+    word = words[random];
+    guess = "";
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+    guesses = [];
+
+    function game() {
+        if (!stop) {
+            // Only need to update if played
+            if (played) {
+                // Fill background
+                ctx.fillStyle="white";
+                ctx.fillRect(0,0,canv.width,canv.height);
+
+                // Update hangman image
+                updateMan();
+                // Update word
+                updateWord();
+                // Update strike counter
+                updateStrikes();
+            }
+            if (won) {
+                ctx.fillStyle = "black";
+                ctx.fillText("YOU WON", canv.width/2, canv.height - 100);
+                stop = true;
+            }
+
+            if (lost) {
+                ctx.fillStyle = "black";
+                ctx.fillText("YOU LOST, the word was " + word, canv.width/2, canv.height - 100);
+                stop = true;
+            }
+            played = false;
+        }
+    }
+
+    function updateMan() {
+        switch(strikes) {
+            case 0:
+                emptyHang = new Image();
+                emptyHang.src = "blank.png";
+                emptyHang.onload = function(){
+                    ctx.drawImage(emptyHang, 32, 0, 550, 400);
+                }
+                break;
+            case 1:
+                hang = new Image();
+                hang.src = "leye.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                break;
+            case 2:
+                hang = new Image();
+                hang.src = "reye.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                break;
+            case 3:
+                hang = new Image();
+                hang.src = "nose.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                break;
+            case 4:
+                hang = new Image();
+                hang.src = "lbrow.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                break;
+            case 5:
+                hang = new Image();
+                hang.src = "rbrow.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                break;
+            case 6:
+                hang = new Image();
+                hang.src = "mouth.png";
+                hang.onload = function(){
+                    ctx.drawImage(hang, 32, 0, 550, 400);
+                }
+                lost = true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    function updateWord() {
+        var x;
+        var updatedWord = "";
+        for (x of word) {
+          if (guesses.includes(x)) {
+            updatedWord += x + " ";
+          } else {
+            updatedWord += "_ ";
+          }
+        }
+
+        if (!updatedWord.includes("_")) {
+            won = true;
+        }
+
+        ctx.fillStyle = "black";
+        ctx.font = "30px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(updatedWord, canv.width/2, canv.height - 50);
+    }
+
+    function updateStrikes() {
+        ctx.fillStyle = "black";
+        ctx.fillText(strikes, canv.width - 100, canv.height - 50);
+    }
+
+    function keyPush(input) {
+        if (!won && !lost) {
+            switch(input.keyCode) {
+                // Enter
+                case 13:
+                   if (guesses.includes(guess)) {
+                        console.log("Already guessed" + guess);
+                        break;
+                   }
+                   guesses.push(guess);
+                   if (word.includes(guess)) {
+                        played = true;
+                        break;
+                   }
+                   played = true;
+                   strikes += 1;
+                   break;
+                // Letters
+                default:
+                    if (alphabet.includes(input.key)) {
+                        ctx.fillStyle = "white";
+                        ctx.fillRect(20, 20, 100, canv.height - 50);
+
+                        guess = input.key;
+
+                        ctx.fillStyle = "black";
+                        ctx.fillText(guess, 100, canv.height - 50);
+                    }
+            }
+        } else {
+            if (input.keyCode === 32) {
+                random = Math.floor(Math.random() * words.length);
+                word = words[random];
+                guesses = [];
+                guess = "";
+                stop = false;
+                lost = false;
+                won = false;
+                strikes = 0;
+                played = true;
+            }
+        }
+    }
+</script>
+<p><strong>Controls:</strong> Use the keyboard to enter a guess. It will show up in the bottom left corner. <br>
+    Press enter to make the selected guess. The game will prevent you from making duplicate guesses. <br>
+    The number of strikes will show up in the bottom right corner. 6 strikes and you lose.<br>
+    Upon win or loss, hit space to reset.
+
+</p>
+</body>
+</html>

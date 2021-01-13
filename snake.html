@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link href="style.css" type="text/css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
+    <title>Snake</title>
+  </head>
+
+  <body>
+  <header class=banner>
+    <a href="games.html">Back to games</a>
+    <strong>Snake</strong>
+    <a href="index.html">Home</a>
+  </header>
+    <div class=gamecanvas>
+      <canvas id="gc" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+      window.onload=function() {
+        canv=document.getElementById("gc");
+        ctx=canv.getContext("2d");
+        // Be able to accept inputs from keyboard
+        document.addEventListener("keydown", keyPush);
+        // Run game function every 1000/15 milliseconds (15 times every second)
+        setInterval(game,1000/15);
+      }
+
+      // Grid is 20x20
+      success = false;
+      applePlaced = true;
+      dead = false;
+      paused = false;
+      gameStarted = false;
+      sxv = syv = 0;
+      // Player pos starts out in the middle 10, 10
+      px=py=10;
+      // Grid size = num of tiles = 2-
+      gs=tc=20;
+      // Set starting position of apple manually 15, 15
+      ax=ay=15;
+      // Starting velo is 0
+      xv=yv=0;
+      // Set trail to empty list
+      trail=[];
+      // Set trail starting length to 5
+      tail = 5;
+
+      // Main game function
+      function game() {
+        // Pausing supported
+        // Disabled backtracking on itself
+        // Implemented a hard stop when dead and reset capability
+        // Ensured apple doesnt spawn on trail
+        // Need to implement winning logic
+
+        // Fill background
+        ctx.fillStyle="black";
+        ctx.fillRect(0,0,canv.width,canv.height);
+
+        // Now fill snake color
+        ctx.fillStyle="lime";
+        // Winning logic
+        if (tail == (gs * tc - 1) && !dead) {
+          alert("You won!");
+          dead = true;
+        }
+
+        // Player position changed by velocity everytime game is run
+        px += xv;
+        py += yv;
+
+        // Snake is out of bounds
+        if (px < 0 || px > tc - 1 || py < 0 || py > tc - 1) {
+            xv = yv = 0;
+            dead = true;
+        }
+
+        for(var i=0; i < trail.length; i++) {
+            //gs-2 to separate blocks of snake
+            ctx.fillRect(trail[i].x*gs, trail[i].y*gs, gs-2, gs-2);
+            // Player ran into the trail
+            if (trail[i].x == px && trail[i].y == py && !paused && gameStarted) {
+                xv = yv = 0;
+                dead = true;
+                //tail = 5;
+            }
+        }
+        // Add current location to the trail
+        if (paused || dead) {
+          tail = tail;
+        } else {
+          trail.push({x:px, y:py});
+          // If player died remove from trail
+          while (trail.length > tail) {
+            trail.shift();
+          }
+        }
+
+
+        // Apple has been eaten, randomly place a new one
+        if(ax == px && ay == py) {
+            tail++;
+            applePlaced = false;
+            while (!applePlaced) {
+              ax = Math.floor(Math.random()*tc);
+              ay = Math.floor(Math.random()*tc);
+              success = true;
+              for(var i=0; i < trail.length; i++) {
+                if (trail[i].x == ax && trail[i].y == ay && !paused) {
+                  success = false;
+                  break;
+                }
+              }
+              if (success) {
+                applePlaced = true;
+              }
+            }
+        }
+
+        // Last thing we do is fill the apple
+        ctx.fillStyle="red";
+        ctx.fillRect(ax*gs,ay*gs,gs-2,gs-2);
+      }
+
+      // Function to handle inputs from arrowpad
+      function keyPush(input) {
+        switch(input.keyCode) {
+            // Space to pause
+            case 32:
+              if (dead) {
+                gameStarted = false;
+                px = py = 10;
+                ax = ay = 15;
+                tail = 5;
+                trail = [];
+                dead = false;
+                break;
+              }
+              if (paused) {
+                xv = sxv;
+                yv = syv;
+                paused = false;
+              } else {
+                paused = true;
+                sxv = xv;
+                syv = yv;
+                xv = yv = 0;
+              }
+              break;
+            //Left
+            case 37:
+              if (!paused && !dead && xv !== 1) {
+                xv = -1; yv = 0;
+                gameStarted = true;
+              }
+              break;
+            // Down
+            case 38:
+              if (!paused && !dead && yv !== 1) {
+                xv = 0; yv = -1;
+                gameStarted = true;
+              }
+              break;
+            // Left
+            case 39:
+              if (!paused && !dead && xv !== -1) {
+                xv = 1; yv = 0;
+                gameStarted = true;
+              }
+              break;
+            // Right
+            case 40:
+              if (!paused && !dead && yv !== -1) {
+                xv = 0; yv = 1;
+                gameStarted = true;
+              }
+              break;
+        }
+      }
+    </script>
+
+    <p><strong>Controls:</strong> Use the arrow keys to move snake. If snake
+      dies use spacebar to reset the game. If snake is alive, spacebar can be
+      used to pause the game.
+    </p>
+  </body>
+</html>
