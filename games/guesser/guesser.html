@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link href="style.css" type="text/css" rel="stylesheet">
+    <link href="../../style.css" type="text/css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Roboto+Slab:wght@300&display=swap" rel="stylesheet">
     <title>Guess the Word</title>
 </head>
 <body>
 <header class=banner>
-    <a href="games.html">Back to games</a>
+    <a href="../games.html">Back to games</a>
     <strong>Guess the Word</strong>
-    <a href="index.html">Home</a>
+    <a href="../../index.html">Home</a>
 </header>
 <div class=gamecanvas>
     <canvas id="gc" width="600" height="600"></canvas>
@@ -78,49 +78,49 @@
         switch(strikes) {
             case 0:
                 emptyHang = new Image();
-                emptyHang.src = "blank.png";
+                emptyHang.src = "images/blank.png";
                 emptyHang.onload = function(){
                     ctx.drawImage(emptyHang, 32, 0, 550, 400);
                 }
                 break;
             case 1:
                 hang = new Image();
-                hang.src = "leye.png";
+                hang.src = "images/leye.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
                 break;
             case 2:
                 hang = new Image();
-                hang.src = "reye.png";
+                hang.src = "images/reye.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
                 break;
             case 3:
                 hang = new Image();
-                hang.src = "nose.png";
+                hang.src = "images/nose.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
                 break;
             case 4:
                 hang = new Image();
-                hang.src = "lbrow.png";
+                hang.src = "images/lbrow.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
                 break;
             case 5:
                 hang = new Image();
-                hang.src = "rbrow.png";
+                hang.src = "images/rbrow.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
                 break;
             case 6:
                 hang = new Image();
-                hang.src = "mouth.png";
+                hang.src = "images/mouth.png";
                 hang.onload = function(){
                     ctx.drawImage(hang, 32, 0, 550, 400);
                 }
